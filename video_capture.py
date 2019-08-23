@@ -15,6 +15,7 @@ if __name__ == '__main__':
 
     assert(len(args.save_path) > 0)
     assert(args.save_path.fps > 0)
+    
     cap = cv2.VideoCapture(args.camera_index)
     
     w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) if args.width == None else args.width
