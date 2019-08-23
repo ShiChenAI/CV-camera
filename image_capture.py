@@ -1,40 +1,37 @@
-#!/usr/bin/python3
 import cv2
 import argparse
 import os
 
-parser = argparse.ArgumentParser(description='Capture video')
+parser = argparse.ArgumentParser(description='Capture image')
 parser.add_argument('--camera_index', type=int, default=0, help='Camera index.')
-parser.add_argument('--save_path', type=str, default='./data/output.avi', help='Save path.')
+parser.add_argument('--save_dir', type=str, default='./data/images/', help='Save dir')
 parser.add_argument('--width', type=int, help='Video width.')
 parser.add_argument('--height', type=int, help='Video height.')
-parser.add_argument('--fps', type=int, default=30, help='Recording fps.')
 args = parser.parse_args()
 
 if __name__ == '__main__':
-
-    assert(len(args.save_path) > 0)
-    assert(args.fps > 0)
+    assert(len(args.save_dir) > 0)
 
     cap = cv2.VideoCapture(args.camera_index)
-    
+
     w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) if args.width == None else args.width
     h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) if args.height == None else args.height
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')   
+    
+    if not os.path.exists(args.save_dir):
+        os.mkdir(args.save_dir)
 
-    file_dir = os.path.dirname(args.save_path)
-    if len(file_dir) > 0 and not os.path.exists(file_dir):
-        os.mkdir(file_dir)
-
-    out = cv2.VideoWriter()
-    out.open(args.save_path, fourcc, args.fps, (w, h), True)
-
+    idx = 0
     while True:
         ret, frame = cap.read()
         cv2.imshow('Capture', frame)
-        out.write(frame)
+
+        if cv2.waitKey(1) & 0xFF == ord('s'):   
+            file_name = args.save_dir + str(idx) + '.png'
+            cv2.imwrite(file_name, frame) 
+            print('Saved image to ', file_name)
+            idx += 1  
+            
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     cap.release()
-    out.release()
