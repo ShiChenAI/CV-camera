@@ -3,16 +3,20 @@ import cv2
 import argparse
 import os
 
-parser = argparse.ArgumentParser(description='Capture video')
-parser.add_argument('--camera_index', type=int, default=0, help='Camera index.')
-parser.add_argument('--save_path', type=str, default='./data/output.avi', help='Save path.')
-parser.add_argument('--width', type=int, help='Video width.')
-parser.add_argument('--height', type=int, help='Video height.')
-parser.add_argument('--fps', type=int, default=30, help='Recording fps.')
-args = parser.parse_args()
+def get_args():
+    parser = argparse.ArgumentParser(description='Capture video.')
+    parser.add_argument('--camera_index', type=int, default=0, help='Camera index.')
+    parser.add_argument('--save_path', type=str, default='./data/output.avi', help='Save path.')
+    parser.add_argument('--width', type=int, help='Video width.')
+    parser.add_argument('--height', type=int, help='Video height.')
+    parser.add_argument('--fps', type=int, default=30, help='Recording fps.')
+    
+    return parser.parse_args()
 
 if __name__ == '__main__':
 
+    args = get_args()
+    
     assert(len(args.save_path) > 0)
     assert(args.fps > 0)
 

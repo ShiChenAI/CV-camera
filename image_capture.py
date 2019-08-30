@@ -2,14 +2,19 @@ import cv2
 import argparse
 import os
 
-parser = argparse.ArgumentParser(description='Capture image')
-parser.add_argument('--camera_index', type=int, default=0, help='Camera index.')
-parser.add_argument('--save_dir', type=str, default='./data/images/', help='Save dir')
-parser.add_argument('--width', type=int, help='Video width.')
-parser.add_argument('--height', type=int, help='Video height.')
-args = parser.parse_args()
+def get_args():
+    parser = argparse.ArgumentParser(description='Capture image.')
+    parser.add_argument('--camera_index', type=int, default=0, help='Camera index.')
+    parser.add_argument('--save_dir', type=str, default='./data/images/', help='Save dir')
+    parser.add_argument('--width', type=int, help='Video width.')
+    parser.add_argument('--height', type=int, help='Video height.')
+    
+    return parser.parse_args()
 
 if __name__ == '__main__':
+    
+    args = get_args()
+    
     assert(len(args.save_dir) > 0)
 
     cap = cv2.VideoCapture(args.camera_index)
@@ -30,7 +35,7 @@ if __name__ == '__main__':
             cv2.imwrite(file_name, frame) 
             print('Saved image to ', file_name)
             idx += 1  
-            
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
