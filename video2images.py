@@ -9,6 +9,7 @@ def get_args():
     parser.add_argument('--video_name', type=str, help='Video name.')
     parser.add_argument('--batch_process', type=int, default=0, help='Batch process videos.')
     parser.add_argument('--save_path', type=str, help='Save path of output images.')
+    parser.add_argument('--split_save', type=int, default=0, help='Save output splited.')
     
     return parser.parse_args()
 
@@ -39,12 +40,14 @@ def process_video(file_name, save_path):
 def batch_process(video_dir, save_dir, split_save=True):
     for root, dirs, files in os.walk(video_dir):
         if split_save:
-            save_path = os.path.join(save_dir, dirs)
-            if not os.path.exists(save_path):
-                os.mkdir(save_path)
+            for dir in dirs:
+                dir_dir = os.path.join(save_dir, dir)
+                if not os.path.exists(dir_dir):
+                    os.mkdir(dir_dir)
         for file in files:
             if split_save:
-                save_path = os.path.join(save_dir, os.path.splitext(file)[0])
+                save_path = os.path.join(save_dir, root.split('/')[-1])
+                save_path = os.path.join(save_path, os.path.splitext(file)[0])
                 if not os.path.exists(save_path):
                     os.mkdir(save_path)
 
@@ -61,7 +64,7 @@ if __name__ == '__main__':
         assert(len(args.video_dir) > 0)
         if not os.path.exists(args.save_path):
             os.mkdir(args.save_path)
-        batch_process(args.video_dir, args.save_path)
+        batch_process(args.video_dir, args.save_path, args.split_save)
     elif args.batch_process == 0:
         assert(len(args.video_name) > 0)
         process_video(args.video_name, args.save_path)
