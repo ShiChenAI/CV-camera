@@ -36,9 +36,18 @@ def process_video(file_name, save_path):
     cap.release()
 
 
-def batch_process(video_dir, save_path):
+def batch_process(video_dir, save_dir, split_save=True):
     for root, dirs, files in os.walk(video_dir):
+        if split_save:
+            save_path = os.path.join(save_dir, dirs)
+            if not os.path.exists(save_path):
+                os.mkdir(save_path)
         for file in files:
+            if split_save:
+                save_path = os.path.join(save_dir, os.path.splitext(file)[0])
+                if not os.path.exists(save_path):
+                    os.mkdir(save_path)
+
             file_name = os.path.join(root, file)
             process_video(file_name, save_path)
 
@@ -50,6 +59,8 @@ if __name__ == '__main__':
 
     if args.batch_process == 1:
         assert(len(args.video_dir) > 0)
+        if not os.path.exists(args.save_path):
+            os.mkdir(args.save_path)
         batch_process(args.video_dir, args.save_path)
     elif args.batch_process == 0:
         assert(len(args.video_name) > 0)
