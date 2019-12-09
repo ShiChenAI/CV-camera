@@ -1,6 +1,17 @@
 import os
 import sys
 import shutil
+import argparse
+
+def get_args():
+    parser = argparse.ArgumentParser(description='Image processing utilities.')
+    parser.add_argument('--mode', type=int, default=0, help='Processing mode.')
+    parser.add_argument('--source_dir', type=str, help='Source directory of images.')
+    parser.add_argument('--dest_dir', type=str, help='Destination directory of images.')
+    parser.add_argument('--save_path', type=str, help='Save path of output images.')
+    
+    return parser.parse_args()
+
 
 def get_files_path(dir, save_path):
     for root, _, files in os.walk(dir):
@@ -15,7 +26,7 @@ def get_files_path(dir, save_path):
                     f.write(path + '\n')
 
 
-def copy_file(source_dir, dest_dir):
+def copy_files(source_dir, dest_dir):
     if not os.path.exists(dest_dir):
         os.mkdir(dest_dir)
 
@@ -33,7 +44,12 @@ def copy_file(source_dir, dest_dir):
 
 
 if __name__ == '__main__':
+    args = get_args()
+    if args.mode == 0:
+        get_files_path(args.source_dir, args.save_path)
+    elif args.mode == 1:
+        copy_files(args.source_dir, args.dest_dir)
     #get_files_path('./data/output', 'safety_work_images.txt')
-    source_dir = '/mnt/data/src/labelImg/data/downloads/Taisei_output'
-    dest_dir = '/mnt/data/src/labelImg/data/downloads/Taisei_demo/JPEGImages'
-    copy_file(source_dir, dest_dir)
+    #source_dir = '/mnt/data/src/labelImg/data/downloads/Taisei_output'
+    #dest_dir = '/mnt/data/src/labelImg/data/downloads/Taisei_demo/JPEGImages'
+    #copy_file(source_dir, dest_dir)
