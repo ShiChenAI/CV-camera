@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import argparse
+from PIL import Image
 
 def get_args():
     parser = argparse.ArgumentParser(description='Image processing utilities.')
@@ -13,18 +14,26 @@ def get_args():
     return parser.parse_args()
 
 
-def get_files_path(dir, save_path):
+def get_files_path(dir, save_path=''):
+    files_list = []
     for root, _, files in os.walk(dir):
         for f in files:
             path = os.path.abspath(os.path.join(root, f))
             print(path)
             if os.path.isfile(save_path):
-                with open(save_path, 'a') as f:
-                    f.write(path + '\n')
-            else:
-                with open(save_path, 'w') as f:
-                    f.write(path + '\n')
+                if save_path != '':
+                    with open(save_path, 'a') as f:
+                        f.write(path + '\n')
 
+                files_list.append(path)
+            else:
+                if save_path != '':
+                    with open(save_path, 'w') as f:
+                        f.write(path + '\n')
+
+                files_list.append(path)
+    
+    return files_list
 
 def copy_files(source_dir, dest_dir):
     if not os.path.exists(dest_dir):
@@ -42,6 +51,25 @@ def copy_files(source_dir, dest_dir):
             except:
                 print('Unexpected error:', sys.exc_info())
 
+def convert_images(img_dir, output_dir, img_size=(480,360), target_type='png'):   
+    img_list = os.listdir(img_dir)
+    ori_files = [os.path.join(img_dir, _) for _ in img_list]
+    for idx, ori_file in enumerate(ori_files):
+        if idx > 10000:
+            break
+        try:
+            sys.stdout.write('\rConverting image %d/10000 ' % (idx))
+            sys.stdout.flush()
+            img = Image.open(ori_file)
+            img.thumbnail((img_size))
+            output_path = os.path.split(ori_file)[0] + '.' + target_type
+            img.save(output_path)
+            shutil.move(output_path, output_dir)
+        except IOError as e:
+            print('Could not read: ', ori_file)
+            print('Error: ', e)
+            print('Skip it\n')
+            
 
 if __name__ == '__main__':
     args = get_args()
